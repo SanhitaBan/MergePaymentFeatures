@@ -1,0 +1,220 @@
+# OPEN AI PROMPTING GUIDE - Coding Prompt Tips
+
+## Overview
+This guide provides actionable tips and best practices for crafting effective coding prompts, inspired by the GPT-4.1 Prompting Guide. It is designed to help developers write prompts that maximize clarity, steerability, and successful code generation or review, whether for use with LLMs or local simulation systems.
+
+## Key Principles for Coding Prompts
+
+### 1. Be Explicit and Specific
+- **State the coding task clearly:** Describe exactly what you want the model or agent to do (e.g., "Write a Python function to reverse a string").
+- **Specify input/output formats:** Define expected input types, output types, and any edge cases to consider.
+- **Include constraints:** Mention any performance, style, or library constraints (e.g., "Do not use recursion" or "Use only standard libraries").
+
+### 2. Provide Context and Examples
+- **Show context:** If the code is part of a larger project, provide relevant context or surrounding code.
+- **Give examples:** Supply input/output examples to clarify requirements and expected behavior.
+- **Reference standards:** If applicable, mention coding standards or conventions to follow.
+
+### 3. Encourage Stepwise Reasoning
+- **Request planning:** Ask for a plan or pseudocode before the final implementation (e.g., "First, outline your approach, then write the code").
+- **Break down complex tasks:** For multi-step problems, ask for solutions in stages (e.g., "First, write a function to parse the input, then process the data").
+
+### 4. Use Agentic Reminders
+- **Persistence:** Remind the agent to continue until the coding task is fully solved, not stopping at partial solutions.
+- **Tool usage:** If tools (e.g., linters, test runners) are available, instruct the agent to use them for validation.
+- **Reflection:** Encourage reviewing and testing the code before finalizing the answer.
+
+### 5. Minimize Ambiguity
+- **Avoid vague language:** Replace terms like "optimize" or "improve" with concrete goals (e.g., "Reduce time complexity to O(n)").
+- **Clarify intent:** If the prompt could be interpreted in multiple ways, specify the intended approach or outcome.
+
+### 6. Request Explanations and Tests
+- **Ask for comments:** Request inline comments or docstrings to explain the code.
+- **Request test cases:** Ask for example tests or usage scenarios to verify correctness.
+
+## Example Coding Prompts
+
+### Simple Function
+```
+Write a Python function `is_prime(n)` that returns True if `n` is a prime number and False otherwise. Include at least three test cases.
+```
+
+### With Constraints and Context
+```
+Given the following class definition, add a method `to_json()` that returns a JSON string representation of the object. Use only the standard library.
+
+class User:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+```
+
+### Stepwise Reasoning
+```
+Write a function to merge two sorted lists into one sorted list. First, describe your approach, then provide the implementation in Python.
+```
+
+### Agentic Workflow
+```
+You are an agent. Continue until the coding task is fully solved. If you are unsure about requirements, ask clarifying questions. Use available tools to check your code, and provide test cases to demonstrate correctness.
+```
+
+## Common Pitfalls to Avoid
+- **Underspecified prompts:** Missing input/output details or unclear requirements.
+- **Overly broad tasks:** Large, multi-part requests without clear steps.
+- **Lack of examples:** No sample inputs/outputs or test cases.
+- **Ambiguous language:** Vague instructions or goals.
+
+## Iteration and Evaluation
+- Test prompts with a variety of inputs and edge cases.
+- Revise prompts based on observed outputs and failures.
+- Use checklists or templates to ensure all best practices are covered.
+
+## References
+- Inspired by the OpenAI GPT-4.1 Prompting Guide.
+- [OpenAI Cookbook: Prompt Engineering](https://github.com/openai/openai-cookbook)
+
+---
+For further improvements, iterate on your prompts and evaluate their effectiveness regularly. 
+
+
+18
+ 
+GPT-4.1 Prompting Guide 
+The GPT-4.1 family of models represents a significant step forward from GPT-4o in capabilities 
+across coding, instruction following, and long context. In this prompting guide, we collate a series 
+of  important  prompting  tips  derived  from  extensive  internal  testing  to  help  developers  fully 
+leverage the improved abilities of this new model family. 
+Many typical best practices still apply to GPT-4.1, such as providing context examples, making 
+instructions as specific and clear as possible, and inducing planning via prompting to maximize 
+model intelligence. However, we expect that getting the most out of this model will require some 
+prompt migration. GPT-4.1 is trained to follow instructions more closely and more literally than its 
+predecessors, which tended to more liberally infer intent from user and system prompts. This also 
+means, however, that GPT-4.1 is highly steerable and responsive to well-specified prompts - if 
+model  behavior  is  different  from  what  you  expect,  a  single  sentence  firmly  and  unequivocally 
+clarifying your desired behavior is almost always sufficient to steer the model on course. 
+Please read on for prompt examples you can use as a reference, and remember that while this 
+guidance is widely applicable, no advice is one-size-fits-all. AI engineering is inherently an empirical 
+discipline, and large language models inherently nondeterministic; in addition to following this 
+guide, we advise building informative evals and iterating often to ensure your prompt engineering 
+changes are yielding benefits for your use case. 
+1. Agentic Workflows 
+GPT-4.1 is a great place to build agentic workflows. In model training we emphasized providing a 
+diverse  range  of  agentic  problem-solving  trajectories,  and  our  agentic  harness  for  the  model 
+achieves state-of-the-art performance for non-reasoning models on SWE-bench Verified, solving 
+55% of problems. 
+System Prompt Reminders 
+In order to fully utilize the agentic capabilities of GPT-4.1, we recommend including three key types 
+of reminders in all agent prompts. The following prompts are optimized specifically for the agentic 
+coding workflow, but can be easily modified for general agentic use cases. 
+@@     def search(): 
+-          pass 
++          raise NotImplementedError() 
+ 
+*** End Patch 
+EOF 
+""" 
+ 
+APPLY_PATCH_TOOL = { 
+    "name": "apply_patch", 
+    "description": APPLY_PATCH_TOOL_DESC, 
+    "parameters": { 
+        "type": "object", 
+        "properties": { 
+            "input": { 
+                "type": "string", 
+                "description": " The apply_patch command that you wish to 
+execute.", 
+            } 
+        }, 
+        "required": ["input"], 
+    }, 
+} 
+Reference Implementation: apply_patch.py 
+Here’s a reference implementation of the apply_patch tool that we used as part of model training. 
+You’ll need to make this an executable and available as `apply_patch` from the shell where the 
+model will execute commands: 
+In [ ]: 
+#!/usr/bin/env python3 
+ 
+""" 
+A self-contained **pure-Python 3.9+** utility for applying human-readable 
+“pseudo-diff” patch files to a collection of text files. 
+""" 
+ 
+from __future__ import annotations 
+ 
+import pathlib 
+from dataclasses import dataclass, field 
+from enum import Enum 
+from typing import ( 
+    Callable, 
+    Dict, 
+    List, 
+    Optional, 
+    Tuple, 
+    Union, 
+) 
+ 
+ 
+# -------------------------------------------------------------------------
+-- # 
+#  Domain objects 
+# -------------------------------------------------------------------------
+-- # 
+class ActionType(str, Enum): 
+    ADD = "add" 
+    DELETE = "delete" 
+    UPDATE = "update" 
+ 
+ 
+@dataclass 
+class FileChange: 
+    type: ActionType 
+    old_content: Optional[str] = None 
+    new_content: Optional[str] = None 
+    move_path: Optional[str] = None 
+ 
+ 
+@dataclass 
+class Commit: 
+    changes: Dict[str, FileChange] = field(default_factory=dict) 
+ 
+ 
+# -------------------------------------------------------------------------
+-- # 
+#  Exceptions 
+# -------------------------------------------------------------------------
+-- # 
+class DiffError(ValueError): 
+    """Any problem detected while parsing or applying a patch.""" 
+ 
+ 
+# -------------------------------------------------------------------------
+-- # 
+#  Helper dataclasses used while parsing patches 
+# -------------------------------------------------------------------------
+-- # 
+@dataclass 
+class Chunk: 
+    orig_index: int = -1 
+    del_lines: List[str] = field(default_factory=list) 
+    ins_lines: List[str] = field(default_factory=list) 
+ 
+ 
+@dataclass 
+class PatchAction: 
+    type: ActionType 
+    new_file: Optional[str] = None 
+    chunks: List[Chunk] = field(default_factory=list) 
+    move_path: Optional[str] = None 
+ 
+ 
+@dataclass 
+class Patch: 
+    actions: Dict[str, PatchAction] = field(default_factory=dict) 
+ 
+ 
+# -------------------------------------------------------------------------
+-- # 
+#  Patch text parser 

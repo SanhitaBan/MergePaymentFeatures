@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Review Tool</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=ATGzIcOUVISmjjL0i3EioKqTQdXRDuxuUXcsOiesCBg6lRYHoBY69-2TVGSrdwVlBSsGCz5t1dKixZE0&currency=USD&components=buttons&enable-funding=paylater,venmo" data-namespace="paypal_sdk"></script>
+</head>
+<body>
+    <header>
+        <h1>Prompt Review Tool</h1>
+        <nav>
+            <button id="navHome">Home</button>
+            <button id="navLeaderboard">Leaderboard</button>
+            <button id="navAchievements">Achievements</button>
+            <button id="navPremium">Premium Features</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Home Section -->
+        <section id="homeSection">
+            <form id="promptForm">
+                <label for="promptText">Enter your prompt:</label>
+                <textarea id="promptText" required placeholder="Enter your prompt here..."></textarea>
+                
+                <label for="promptType">Evaluation type:</label>
+                <select id="promptType" required>
+                    <option value="" disabled selected>Select a use case</option>
+                    <option value="Chatbot">Chatbot</option>
+                    <option value="Coding">Coding</option>
+                    <option value="Image">Image Generation</option>
+                    <option value="Research">Deep Research</option>
+                </select>
+
+                <div id="userInfoInputs">
+                    <input type="text" id="username" placeholder="Username" required>
+                    <input type="text" id="userContact" placeholder="LinkedIn URL or Email (optional)">
+                    <select id="userContinent">
+                        <option value="" disabled selected>Select Continent</option>
+                        <option value="North America">North America</option>
+                        <option value="South America">South America</option>
+                        <option value="Europe">Europe</option>
+                        <option value="Asia">Asia</option>
+                        <option value="Africa">Africa</option>
+                        <option value="Oceania">Oceania</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="submitBtn">Review Prompt</button>
+            </form>
+        </section>
+
+        <!-- Review Section -->
+        <section id="reviewSection" style="display:none;">
+            <h2>Prompt Review</h2>
+            <div id="originalPromptDisplay"></div>
+            <div id="scoreDisplay"></div>
+            <div id="breakdownDisplay"></div>
+            <ul id="suggestionsList"></ul>
+            <div id="improvedPromptDisplay"></div>
+            <button id="copyImprovedBtn">Copy Improved Prompt</button>
+            <button id="downloadImprovedBtn">Download Improved Prompt</button>
+            <div class="reviewActions">
+                <button id="newPromptBtn">New Prompt</button>
+                <button id="toLeaderboardBtn">View Leaderboard</button>
+                <button id="toAchievementsBtn">My Achievements</button>
+            </div>
+        </section>
+
+        <!-- Leaderboard Section -->
+        <section id="leaderboardSection" style="display:none;">
+            <h2>Leaderboard</h2>
+            <div id="leaderboardFilters">
+                <button id="filterGlobal" class="active">Global</button>
+                <button id="filterRegional">My Continent</button>
+            </div>
+            <table id="leaderboardTable">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Score</th>
+                        <th>Type</th>
+                        <th>Region</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Filled dynamically -->
+                </tbody>
+            </table>
+            <p id="userRankText"></p>
+            <button id="backFromLeaderboard">Back</button>
+        </section>
+
+        <!-- Achievements Section -->
+        <section id="achievementsSection" style="display:none;">
+            <h2>My Achievements</h2>
+            <div id="profileInfoDisplay">
+                <p>Username: <span id="profileName"></span></p>
+                <p>Continent: <span id="profileContinent"></span></p>
+                <p>Contact: <span id="profileContact"></span></p>
+            </div>
+            <div id="badgesContainer">
+                <!-- Badges will be added dynamically -->
+            </div>
+            <button id="backFromAchievements">Back</button>
+        </section>
+
+        <!-- Premium Features Section -->
+        <section id="premiumSection" style="display:none;">
+            <h2>Premium Features</h2>
+            <div class="premium-plans">
+                <div class="plan-card">
+                    <h3>Basic Plan</h3>
+                    <p class="price">$9.99/month</p>
+                    <ul>
+                        <li>Ad-free experience</li>
+                        <li>Advanced prompt suggestions</li>
+                        <li>Priority support</li>
+                    </ul>
+                    <div id="paypal-button-basic" class="paypal-button"></div>
+                </div>
+                <div class="plan-card featured">
+                    <h3>Pro Plan</h3>
+                    <p class="price">$19.99/month</p>
+                    <ul>
+                        <li>All Basic features</li>
+                        <li>Custom prompt templates</li>
+                        <li>API access</li>
+                        <li>Team collaboration</li>
+                    </ul>
+                    <div id="paypal-button-pro" class="paypal-button"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advertising Section -->
+        <section id="advertisingSection" class="ad-container">
+            <div id="premium-ad" class="ad-space">
+                <p>Want to remove ads? Try our Premium plan!</p>
+                <button id="goPremiumBtn">Go Premium</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Notification Modal -->
+    <div id="notification" class="hidden"></div>
+
+    <!-- Scripts -->
+    <script src="js/dataManager.js"></script>
+    <script src="js/uiRenderer.js"></script>
+    <script src="js/promptEvaluator.js"></script>
+    <script src="js/badgeManager.js"></script>
+    <script src="js/knowledgeGraph.js"></script>
+    <script src="js/paymentManager.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookieConsent" class="cookie-consent" style="display: none;">
+        <p>This site uses cookies from PayPal for payment processing. By continuing to use this site, you agree to their use.</p>
+        <button onclick="acceptCookies()">Accept</button>
+    </div>
+
+    <script>
+        function acceptCookies() {
+            document.getElementById('cookieConsent').style.display = 'none';
+            localStorage.setItem('cookieConsent', 'accepted');
+        }
+
+        // Show cookie consent if not previously accepted
+        if (!localStorage.getItem('cookieConsent')) {
+            document.getElementById('cookieConsent').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
