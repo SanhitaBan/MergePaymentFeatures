@@ -85,4 +85,4 @@ If you encounter any issues:
 ## Support
 
 For technical support or payment-related issues:
-- Email: support@promptreviewtool.com 
+- Email: sanhitaroyc@gmail.com 
